@@ -1,0 +1,27 @@
+<template>
+    <lightning-card title="Bind HTML element in LWC">
+        <div class="slds-var-m-around_medium">
+            <lightning-input name="fullName" label="Full Name" onchange={handleChange}></lightning-input>
+            <lightning-input type="number" name="phone" label="Mobile NUmber" onchange={handleChange}></lightning-input>
+            <lightning-input type="email" name="email" label="Email" onchange={handleChange}></lightning-input>
+            
+        </div>
+        <div style="padding:10px">
+            <table border="1">
+                <tr>
+                    <td>Full Name</td>
+                    <td>{fullName}</td>
+                </tr>
+                <tr>
+                    <td>Mobile Number</td>
+                    <td>{phone}</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>{Email}</td>
+                </tr>
+            </table>
+        </div>
+
+    </lightning-card>
+</template>
