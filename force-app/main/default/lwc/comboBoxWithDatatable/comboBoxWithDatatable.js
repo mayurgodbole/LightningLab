@@ -1,5 +1,7 @@
 import { LightningElement, track } from 'lwc';
 import getAccountNames from '@salesforce/apex/comboboxWithDatatable.getAccountNames';
+import getContacts from '@salesforce/apex/comboboxWithDatatable.getContacts';
+
 
 const columns = [
     { label : 'Contacts Name', fieldName : 'Name'},
@@ -44,7 +46,16 @@ export default class ComboBoxWithDatatable extends LightningElement {
         this.cardVisible = true;
         //store selected accountId in "value" property
         this.value = event.detail.value;
-        window.alert(JSON.stringify(this.value));
+        //window.alert(JSON.stringify(this.value));
+        //Call apex method to get contacts of selected Account
+
+        getContacts({ selectedAccountID : this.value}) //pass selected Account recordId to apex method to get related contact records
+        .then( result =>{
+            this.data = result;
+        })
+        .catch(error =>{
+            window.alert("error:"+error);
+        })
 
     }
 }
