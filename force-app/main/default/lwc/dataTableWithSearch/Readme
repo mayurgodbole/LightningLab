@@ -1,0 +1,179 @@
+This component is useful when user want to perform action on perticular object like On account perfor VIEW, EDIT, DELETE.
+User can search using keywords in search box for account object.
+
+follow steps to successfully create this component.
+Step 1: Create Apex Class and perfor SOSL Query on account object.
+        your query should be look lik
+        
+       @AuraEnabled
+    public static List<account> getData(String str){
+        try{
+            String name='%'+str+'%';
+            return [SELECT Id,Name from Account where name like :name];
+        } catch(Exception e){
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+step 2: crete lightning input element.
+         <lightning-input typw="text" placeholder="Enter Search Value" onchange={handleSearch}></lightning-input>
+         
+Step 3: Create lightning datatable.
+        <lightning-datatable key-field={id}
+        data={displayResult}
+        columns={columns}
+        onrowaction={handleRowAction}
+        
+        ></lightning-datatable>
+        
+step 4: import method define in class
+        import getData from '@salesforce/apex/ApexDatatable.getData';
+        
+Step 5: Create Constant veriable to store Columns which will be use in datatable
+        const columns=[
+    {
+        label: 'Name', fieldName:'Name'
+    },
+    
+Step 6: Create HandleSearch function which will used to perfor sosl query and show result for perticular search term.
+         handleSearch(event){
+        this.searchValue = event.target.value;
+        this.ImperativeCall();
+    }
+    ImperativeCall(){
+        getData({str:this.searchValue})
+        .then((result)=>{
+            console.log('Result is: ',result);
+            this.displayResult = result;
+        })
+        .catch((error)=>{
+            console.log('Error occured in Search Database',error);
+        })
+    }
+        
+Step 7: Defien row action and action required to perform EDIT,VIEW,DELETE action
+        const columns=[
+    {
+        label: 'Name', fieldName:'Name'
+    },
+    
+    {
+        type:'action',
+        typeAttributes:{
+            rowActions:actions,
+            menuAlighment:'right'
+        }
+    }
+];
+Step 8: To use handle row  function create another function handleRowAction
+        handleRowAction(event){
+        const actionName=event.detail.action.name;
+        console.log('Event Action: ', actionName);
+        const row=event.detail.row;
+        
+Step 9: Use Switch control statment which will help to perfor one action at time 
+Step 10: Import NavigationMixin to redirect to record pade when user click on VIEW,EDIT
+          handleRowAction(event){
+        const actionName=event.detail.action.name;
+        console.log('Event Action: ', actionName);
+        const row=event.detail.row;
+        switch(actionName){
+            case 'view':
+                this[NavigationMixin.Navigate]({
+                    type:'standard__recordPage',
+                    attributes:{
+                        recordId:row.Id,
+                        objectApiName:'Account',
+                        actionName:'view'
+                        
+                    }
+                });
+                break;
+
+            case 'edit':
+                
+                this[NavigationMixin.Navigate]({
+                    type:'standard__recordPage',
+                    attributes:{
+                        recordId:row.Id,
+                        objectApiName:'Account',
+                        actionName:'edit',
+                        
+                    }
+                    
+                });
+                break;
+        
+Step 11: TO perform delete action update Apex class code 
+          @AuraEnabled
+    public static void deleteAccount(Account objaccount){
+        try {
+            
+            delete objaccount;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+          
+Step 12: Create deleteAccount function and use tost message to inform user that account is deleted 
+          handleRowAction(event){
+        const actionName=event.detail.action.name;
+        console.log('Event Action: ', actionName);
+        const row=event.detail.row;
+        switch(actionName){
+            case 'view':
+                this[NavigationMixin.Navigate]({
+                    type:'standard__recordPage',
+                    attributes:{
+                        recordId:row.Id,
+                        objectApiName:'Account',
+                        actionName:'view'
+                        
+                    }
+                });
+                break;
+
+            case 'edit':
+                
+                this[NavigationMixin.Navigate]({
+                    type:'standard__recordPage',
+                    attributes:{
+                        recordId:row.Id,
+                        objectApiName:'Account',
+                        actionName:'edit',
+                        
+                    }
+                    
+                });
+                break;
+            case 'delete':
+                this.deleteAccount(row);
+                console.log(row);
+            break;
+
+        }
+    }
+    deleteAccount(currentRow){
+        
+        deleteAccount({objaccount:currentRow})
+        .then((result)=>{
+            this.dispatchEvent(new ShowToastEvent({
+                title:'Success',
+                message:currentRow.Name +' account deleteDataset.',
+                variant:success
+
+            }))
+
+        })
+
+        .catch((error)=>{
+            this.dispatchEvent(new ShowToastEvent({
+                title:'Error',
+                message:currentRow.Name +' account deleted',
+                variant:'error'
+            }))
+        })
+            
+        
+
+    }
+          
