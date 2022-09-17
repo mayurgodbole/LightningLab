@@ -12,4 +12,14 @@ public with sharing class ApexDatatable {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
+    @AuraEnabled
+    public static void deleteAccount(Account objaccount){
+        try {
+            
+            delete objaccount;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
 }

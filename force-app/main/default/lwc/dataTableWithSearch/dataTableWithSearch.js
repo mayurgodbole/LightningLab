@@ -1,27 +1,33 @@
 import { LightningElement } from 'lwc';
 import getData from '@salesforce/apex/ApexDatatable.getData';
-import { getReplicatedDataset } from 'lightning/analyticsWaveApi';
-const actions=[{label:'View', name:'View'},
-{label:'Edit', name:'Edit'},
-{label:'Delete', name:'Delete'}            
+import deleteAccount from '@salesforce/apex/ApexDatatable.deleteAccount';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { deleteDataset, getReplicatedDataset } from 'lightning/analyticsWaveApi';
+import {NavigationMixin} from 'lightning/navigation';
+const actions=[{label:'View', name:'view'},
+{label:'Edit', name:'edit'},
+{label:'Delete', name:'delete'}            
 ];
-export default class DataTableWithSearch extends LightningElement {
+
+const columns=[
+    {
+        label: 'Name', fieldName:'Name'
+    },
+    
+    {
+        type:'action',
+        typeAttributes:{
+            rowActions:actions,
+            menuAlighment:'right'
+        }
+    }
+];
+export default class DataTableWithSearch extends NavigationMixin (LightningElement) {
 
     searchValue;
     displayResult;
+    columns=columns;
     
-    columns=[
-        {
-            label: 'Name', fieldName:'Name'
-        },
-        {
-            type:'action',
-            typeAttributes:{
-                rowActions:actions,
-                menuAlighment:'right'
-            }
-        }
-    ];
     handleSearch(event){
         this.searchValue = event.target.value;
         this.ImperativeCall();
@@ -35,5 +41,67 @@ export default class DataTableWithSearch extends LightningElement {
         .catch((error)=>{
             console.log('Error occured in Search Database',error);
         })
+    }
+
+    handleRowAction(event){
+        const actionName=event.detail.action.name;
+        console.log('Event Action: ', actionName);
+        const row=event.detail.row;
+        switch(actionName){
+            case 'view':
+                this[NavigationMixin.Navigate]({
+                    type:'standard__recordPage',
+                    attributes:{
+                        recordId:row.Id,
+                        objectApiName:'Account',
+                        actionName:'view'
+                        
+                    }
+                });
+                break;
+
+            case 'edit':
+                
+                this[NavigationMixin.Navigate]({
+                    type:'standard__recordPage',
+                    attributes:{
+                        recordId:row.Id,
+                        objectApiName:'Account',
+                        actionName:'edit',
+                        
+                    }
+                    
+                });
+                break;
+            case 'delete':
+                this.deleteAccount(row);
+                console.log(row);
+            break;
+
+        }
+    }
+    deleteAccount(currentRow){
+        
+        deleteAccount({objaccount:currentRow})
+        .then((result)=>{
+            this.dispatchEvent(new ShowToastEvent({
+                title:'Success',
+                message:currentRow.Name +' account deleteDataset.',
+                variant:success
+
+            }))
+
+        })
+
+        .catch((error)=>{
+            this.dispatchEvent(new ShowToastEvent({
+                title:'Error',
+                message:currentRow.Name +' account deleted',
+                variant:'error'
+            }))
+        })
+            
+        
+
     }
 }
