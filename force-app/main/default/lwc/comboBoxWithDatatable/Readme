@@ -1,0 +1,106 @@
+This component useful to select account name from combobox and display related contacts in datatable.
+Following steps will help you to understand component better
+
+1) Create apex class comboboxWithDatatable
+	inside apex class created method which will return account names
+	
+	 @AuraEnabled
+    public static List<Account> getAccountNames(){
+        List<Account> accountList = [Select Id,Name from Account];
+       return accountList;
+    }
+		
+2) Create LWC Component comboboxWithDatatable
+3) In comboboxWithDatatable.html create lightning combobox 
+
+		<lightning-combobox label = "Account Available"
+                            value = {value}
+                            placeholder = "Select an account"
+                            options={options}
+                            onchange={handleChangeValue}>
+
+        </lightning-combobox>
+				
+4) import getAccountNames to load data into combobox "import getAccountNames from '@salesforce/apex/comboboxWithDatatable.getAccountNames';"
+5) Declare array which will store options for combobox 
+		@track value = '';
+    @track optionsArray = [];
+		
+6) create connectCallBack method which will call apex method to get apex account names
+connectedCallback(){
+        getAccountNames()
+        .then(response=>{
+            let arr = []; //This array store the accounts details in lable and pair
+            for(var i=0; i<response.length; i++)
+            {
+                //add the account Name as label and Id as value in arr[]
+                arr.push({label : response[i].Name, value : response[i].Id})
+
+            }
+            //store the arr objects into optionsArray
+            this.optionsArray = arr
+
+        });
+    }
+	
+7) Store options by returing options array
+get options(){
+        return this.optionsArray;
+
+    }
+		
+8) Now to display related contacts in datatable when account select :
+		Create method  is comboboxWithDatatable class give name getContacts
+		
+		 @AuraEnabled
+    public static List<Contact> getContacts(string selectedAccountId){
+        List<Contact> contactList = [Select Id,Name,Email, AccountId From Contact Where AccountId=: selectedAccountId];
+        return contactList;
+				
+9) To disply result you need to create lightning datatable and datatable only visible when any account is select otherwise it wil be hidden.
+
+<template if:true={cardVisible}>
+        <lightning-card title="List Of Related Contacts">
+            <div style="height: 200px;">
+                <lightning-datatable key-field ="id"
+                                    data = {data}
+                                    columns={columns}></lightning-datatable>
+            </div>
+        </lightning-card>
+    </template>
+		
+10) import getContacts method in comboboxWithDatatable.js 
+import getContacts from '@salesforce/apex/comboboxWithDatatable.getContacts';
+
+11) First Declare Columns which will simplify datatable with differnt fields 
+
+	const columns = [
+    { label : 'Contacts Name', fieldName : 'Name'},
+    { label : 'Email', fieldName : 'Email'},
+    { label : 'Phone', fieldName: 'Phone'}
+]
+
+12) make cardVisible = false;
+13) use @track data = [];  for storing contact details in datatable
+14) Create method which will return result whenever user select Account
+	handleChangeValue(event){
+        //whenever (cardVisible = true) then contact with related account will show in datatable
+        this.cardVisible = true;
+        //store selected accountId in "value" property
+        this.value = event.detail.value;
+        //window.alert(JSON.stringify(this.value));
+        //Call apex method to get contacts of selected Account
+
+        getContacts({ selectedAccountID : this.value}) //pass selected Account recordId to apex method to get related contact records
+        .then( result =>{
+            this.data = result;
+        })
+        .catch(error =>{
+            window.alert("error:"+error); // this is one type you can also use toast message here
+        })
+
+    }
+
+
+    }
+		
