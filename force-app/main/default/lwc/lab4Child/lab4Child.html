@@ -1,24 +1,12 @@
 <template>
-<template if:true={showActive}>
-    <lightning-card title="List of Active Accounts">
+    <template if:true={accounts.data}>
+        <div class="slds-m-around_medium">
+        <h2> Accounts </h2>
         <lightning-datatable
-        key-field="id"
-        data={displaytable}
-        columns={columns}
-    >
-    </lightning-datatable>
-    </lightning-card>
-   
-</template>
-<!--<template if:true={showinActive}>
-    <lightning-card title="List of InActive Accounts">
-        <lightning-datatable
-        key-field="id"
-        data={displaytable}
-        columns={columns}
-    >
-    </lightning-datatable>
-    </lightning-card>
-   
-</template>-->
+        key-field="Id"
+        data={accounts.data}
+        columns={columns}>
+        </lightning-datatable>
+        </div>
+    </template>  
 </template>

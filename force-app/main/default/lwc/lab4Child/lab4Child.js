@@ -1,65 +1,40 @@
-import { LightningElement,api,wire} from 'lwc';
-import getActiveAccountInfo from '@salesforce/apex/AccountPubSub.getActiveAccountInfo';
-//import getinActiveAccountInfo from '@salesforce/apex/AccountPubSub.getinActiveAccountInfo';
-
+import { LightningElement , api,  wire} from 'lwc';
+import getAccounts from '@salesforce/apex/ChildAccountController.getAccountList';
+import NAME_FIELD from '@salesforce/schema/Account.Name';
+import PHONE_FIELD from '@salesforce/schema/Account.Phone';
+import WEBSITE_FIELD from '@salesforce/schema/Account.Website';
+import ACCOWNER_FIELD from '@salesforce/schema/Account.Owner.Name';
+//import SystemModstamp from '@salesforce/schema/Account.SystemModstamp';
+const cols =[{
+    label: 'Name',
+    fieldName: NAME_FIELD.fieldApiName,
+    editable: false
+},
+{
+    label: 'Phone',
+    fieldName: PHONE_FIELD.fieldApiName,
+    editable: false
+},
+{
+    label: 'Website',
+    fieldName: WEBSITE_FIELD.fieldApiName,
+    editable: false
+},
+{
+    label: 'Account Owner',
+    fieldName: ACCOWNER_FIELD.fieldApiName,
+    editable: false
+}
+];
 
 export default class Lab4Child extends LightningElement {
-    showActive ;
-    showinActive;
-    displaytable;
-    columns=[
-        {
-        label:'Account Name',
-        fieldName:'Name'
-        },
-        {
-            label:'Phone Number',
-            fieldName:'Phone',
-            type:'phone'
-        },
-        {
-            label:'Account Type',
-            fieldName:'Type'
-        },
-        {
-            label:'Website',
-            fieldName:'Website'
-        },
-        {
-            label:'Active',
-            fieldName:'Active__c'
-        }
-    ]
-    @api handlechildMethodActive(){
+  
+           
+    @api activeStatus= "No";
+    columns = cols;
 
+    @wire(getAccounts, { activeStatus : '$activeStatus'}) accounts;
         
-        this.showActive='List of Active Account';
     }
-    // @api handleInactive(){
-
-        
-    //     this.showinActive='List of InActive Account';
-    // }
-    @wire(getActiveAccountInfo)
-    relatedData({error,data}){
-        if(data)
-        {
-            this.displaytable=data;
-        }
-        else if(error){
-            console.log(error);
-        }
-    }
-
-    // @wire(getInActiveAccountInfo)
-    // relatedData({error,data}){
-    //     if(data)
-    //     {
-    //         this.displaytable=data;
-    //     }
-    //     else if(error){
-    //         console.log(error);
-    //     }
-    // }
+       
    
-}

@@ -1,11 +1,13 @@
-import { LightningElement } from 'lwc';
+import { api,LightningElement} from 'lwc';
 
 export default class Lab4parent extends LightningElement {
 
-    handleClick(){
-        this.template.querySelector('c-lab4-child').handlechildMethodActive();
+    @api value = "No";
+
+    handleActive(){
+        this.value = "Yes";
     }
-    // handeClickInactive(){
-    //     this.template.querySelector('c-lab4-child').handleInactive();
-    // }
+    handleInactive(){
+        this.value = "No";
+    }
 }
