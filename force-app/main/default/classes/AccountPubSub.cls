@@ -16,6 +16,17 @@ public with sharing class AccountPubSub {
         else{
             return null;
         }
+
        
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Account> getActiveAccountInfo(){
+        return [SELECT Name, Type, Phone, Website,Active__c from Account where Active__c='Yes' limit 10];
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Account> getInActiveAccountInfo(){
+        return [SELECT Name, Type, Phone, Website,Active__c from Account where Active__c='No' limit 10];
     }
 }

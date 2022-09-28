@@ -1,0 +1,28 @@
+<template>
+    <lightning-card title="Opportunity Details">
+    <lightning-record-view-form
+    record-id={recordId}
+    object-api-name={objectApiName}
+    density="compact"
+>
+    <div>
+        <table border="1">
+            <tbody>
+                <tr>
+                    <td><lightning-output-field field-name="Name"> </lightning-output-field></td>
+                </tr>
+                <tr>
+                    <td><lightning-output-field field-name="Amount"> </lightning-output-field></td>
+                </tr>
+                <tr>
+                    <td><lightning-output-field field-name="Type"> </lightning-output-field></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        
+      
+    </div>
+</lightning-record-view-form>
+</lightning-card>
+</template>

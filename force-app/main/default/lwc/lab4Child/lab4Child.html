@@ -1,0 +1,24 @@
+<template>
+<template if:true={showActive}>
+    <lightning-card title="List of Active Accounts">
+        <lightning-datatable
+        key-field="id"
+        data={displaytable}
+        columns={columns}
+    >
+    </lightning-datatable>
+    </lightning-card>
+   
+</template>
+<template if:true={showinActive}>
+    <lightning-card title="List of InActive Accounts">
+        <lightning-datatable
+        key-field="id"
+        data={displaytable}
+        columns={columns}
+    >
+    </lightning-datatable>
+    </lightning-card>
+   
+</template>
+</template>

@@ -1,5 +1,4 @@
-public with sharing class comboboxWithDatatable {
-    // This method will return all account to LWC
+public with sharing class oneSectionforAllInfo {
     @AuraEnabled
     public static List<Account> getAccountNames(){
         List<Account> accountList = [Select Id,Name from Account];
@@ -10,11 +9,5 @@ public with sharing class comboboxWithDatatable {
     public static List<Contact> getContacts(string selectedAccountId){
         List<Contact> contactList = [Select Id,Name,Email, AccountId From Contact Where AccountId=: selectedAccountId];
         return contactList;
-    }
-
-    @AuraEnabled
-    public static List<Case> getCase(string selectedAccountId){
-        List<Case> cases = [Select 	CaseNumber,Origin,CreatedDate, AccountId From Case Where AccountId=: selectedAccountId];
-        return cases;
     }
 }
