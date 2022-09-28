@@ -6,6 +6,6 @@ export default class Lab4parent extends LightningElement {
         this.template.querySelector('c-lab4-child').handlechildMethodActive();
     }
     handeClickInactive(){
-        this.template.querySelector('c-lab4-child').handlechildMethodinActive();
+        this.template.querySelector('c-lab4-child').handleInactive();
     }
 }

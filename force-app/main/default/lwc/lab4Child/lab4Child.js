@@ -51,7 +51,7 @@ export default class Lab4Child extends LightningElement {
         }
     }
 
-    @wire(getinActiveAccountInfo)
+    @wire(getInActiveAccountInfo)
     relatedData({error,data}){
         if(data)
         {
